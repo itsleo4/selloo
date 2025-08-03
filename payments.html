@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Selloo - Payment Status</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        :root {
+            --color-neon-green: #39FF14;
+            --color-neon-pink: #FF1493;
+            --color-dark-bg: #0F0F0F;
+        }
+    </style>
+</head>
+<body class="bg-[--color-dark-bg] text-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div id="statusContainer" class="text-center p-8 rounded-2xl shadow-2xl max-w-lg mx-auto border-4 transition-colors duration-500">
+        <div id="statusIcon" class="mb-4">
+            <!-- Icon will be dynamically added here -->
+        </div>
+        <h1 id="statusTitle" class="text-4xl font-extrabold mb-4">
+            <!-- Title will be dynamically added here -->
+        </h1>
+        <p id="statusMessage" class="text-lg text-gray-400 mb-6">
+            <!-- Message will be dynamically added here -->
+        </p>
+        <a id="returnToStoreBtn" href="#" class="px-8 py-3 rounded-full font-bold text-sm transition-all duration-300 shadow-lg">
+            Return to Store
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const productId = urlParams.get('product');
+            const storeOwnerId = urlParams.get('uid');
+
+            const statusContainer = document.getElementById('statusContainer');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const pageTitle = document.getElementById('pageTitle');
+            const returnToStoreBtn = document.getElementById('returnToStoreBtn');
+
+            if (status === 'success') {
+                pageTitle.textContent = "Selloo - Purchase Successful";
+                statusContainer.classList.add('bg-gray-900', 'border-[--color-neon-green]');
+                statusIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-[--color-neon-green]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                `;
+                statusTitle.textContent = "Thank you for your purchase!";
+                statusMessage.textContent = "Your payment was successful. The content is now unlocked for you.";
+                returnToStoreBtn.classList.add('bg-[--color-neon-green]', 'text-gray-900', 'hover:bg-opacity-80');
+            } else if (status === 'cancel') {
+                pageTitle.textContent = "Selloo - Payment Failed";
+                statusContainer.classList.add('bg-gray-900', 'border-red-500');
+                statusIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                `;
+                statusTitle.textContent = "Payment failed or cancelled.";
+                statusMessage.textContent = "There was an issue processing your payment. Please try again.";
+                returnToStoreBtn.classList.add('bg-red-500', 'text-white', 'hover:bg-opacity-80');
+            } else {
+                pageTitle.textContent = "Selloo - Status Unknown";
+                statusContainer.classList.add('bg-gray-900', 'border-gray-500');
+                statusIcon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                `;
+                statusTitle.textContent = "Unknown status.";
+                statusMessage.textContent = "Please check with the store owner for details.";
+                returnToStoreBtn.classList.add('bg-gray-500', 'text-white', 'hover:bg-opacity-80');
+            }
+
+            if (storeOwnerId) {
+                returnToStoreBtn.href = `store.html?uid=${storeOwnerId}`;
+            } else {
+                returnToStoreBtn.href = 'index.html'; // Fallback
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selloo - Create. Share. Sell. Instantly.</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Tailwind configuration for specific colors and font */
+        /* This block is necessary for Tailwind CDN to recognize custom colors and fonts */
+        /* If you were using a build process, these would be in tailwind.config.js */
+        :root {
+            --color-neon-green: #39FF14;
+            --color-neon-pink: #FF1493;
+            --color-dark-bg: #0F0F0F;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-[--color-dark-bg] text-gray-100 min-h-screen">
+
+    <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
+        <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
+            <a href="#" class="text-4xl font-extrabold text-[--color-neon-green] tracking-tight">Selloo</a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8 text-lg">
+                    <li><a href="#features" class="hover:text-[--color-neon-green] transition duration-300">Features</a></li>
+                    <li><a href="#" class="hover:text-[--color-neon-green] transition duration-300">Pricing</a></li>
+                    <li><a href="#" class="hover:text-[--color-neon-green] transition duration-300">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-100 focus:outline-none p-2 rounded-md hover:bg-gray-800 transition duration-300">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-[--color-dark-bg] px-4 pt-2 pb-4 border-t border-gray-800">
+            <ul class="flex flex-col space-y-3 text-lg">
+                <li><a href="#features" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Features</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Pricing</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <section class="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 py-16 md:py-24">
+        <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-white tracking-tight">
+            Create. Share. Sell. <span class="text-[--color-neon-green]">Instantly.</span>
+        </h1>
+        <p class="text-xl md:text-2xl max-w-3xl mb-10 text-gray-300">
+            Build a mobile-friendly store in seconds — no code needed.
+        </p>
+        <a href="builder.html" class="bg-[--color-neon-green] text-gray-900 font-bold py-4 px-10 rounded-full text-xl hover:bg-opacity-80 transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">
+            Start Now
+        </a>
+    </section>
+
+    <section id="features" class="py-16 md:py-24 px-4 bg-gray-900">
+        <div class="container mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-white">Why Selloo?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
+                    <div class="w-20 h-20 bg-[--color-neon-pink] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.395 2.174a1 1 0 00-1.285-.367l-7.5 4.5a1 1 0 00-.012 1.76l7.5 4.5a1 1 0 001.285-.367l-3.5-7zM16 9a1 1 0 00-1 1v4a1 1 0 11-2 0v-4a1 1 0 10-2 0v4a1 1 0 11-2 0V9a1 1 0 00-1-1zm-4-3a1 1 0 00-1 1v4a1 1 0 11-2 0V7a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">No Code Required</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Build your store with intuitive drag-and-drop tools, no coding knowledge needed.</p>
+                </div>
+                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
+                    <div class="w-20 h-20 bg-[--color-neon-green] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 14a2 2 0 100-4 2 2 0 000 4z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Mobile-First Design</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Your store looks stunning and functions perfectly on any mobile device.</p>
+                </div>
+                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
+                    <div class="w-20 h-20 bg-[--color-neon-pink] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Free & Pro Plans</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Start for free and upgrade to Pro for advanced features and more.</p>
+                </div>
+                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
+                    <div class="w-20 h-20 bg-[--color-neon-green] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
+                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Instant Share Links</h3>
+                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Share your store with customers instantly via a unique, easy-to-remember link.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-24 px-4">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-white">See Selloo in Action</h2>
+            <div class="bg-gray-800 rounded-xl p-6 md:p-12 max-w-4xl mx-auto border-4 border-[--color-neon-green] shadow-2xl">
+                <div class="relative w-full h-80 md:h-96 bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center border border-gray-600">
+                    <p class="text-gray-400 text-xl md:text-2xl font-medium">Mobile Store Mockup Preview Here</p>
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 py-8 px-4 mt-16 border-t border-gray-800">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm space-y-4 md:space-y-0">
+            <div>
+                <a href="https://t.me/selloo_contact" target="_blank" class="hover:text-[--color-neon-green] transition duration-300 text-base">Telegram / Contact Us</a>
+            </div>
+            <div class="text-base">
+                Built by Your Name
+            </div>
+            <div class="bg-gray-800 text-gray-500 text-xs px-4 py-2 rounded-full font-semibold">
+                v1.0
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Selloo - Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        :root {
+            --color-neon-green: #39FF14;
+            --color-neon-pink: #FF1493;
+            --color-dark-bg: #0F0F0F;
+        }
+    </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body class="bg-[--color-dark-bg] text-gray-100 min-h-screen">
+
+    <!-- Header for the public store -->
+    <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
+        <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
+            <a href="index.html" class="text-3xl font-extrabold text-white">Selloo</a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto p-4 md:p-8">
+        <h2 id="store-header" class="text-4xl font-extrabold text-white text-center md:text-left">
+            <span class="text-[--color-neon-pink]">Loading...</span>
+        </h2>
+
+        <!-- Product List -->
+        <div id="publicStoreProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            <!-- Product cards will be rendered here dynamically -->
+        </div>
+
+        <p id="emptyStoreMessage" class="hidden text-center text-gray-500 mt-8">This store has no products yet.</p>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+              apiKey: "AIzaSyAoe8uFfecihMO_FbCNQ3zIKikfHcVZy8A",
+              authDomain: "selloo-6eb2b.firebaseapp.com",
+              projectId: "selloo-6eb2b",
+              storageBucket: "selloo-6eb2b.firebasestorage.app",
+              messagingSenderId: "825664800500",
+              appId: "1:825664800500:web:38001172e411163d3440a1",
+              measurementId: "G-Y26MH0D6HD"
+            };
+
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+
+            // DOM Elements
+            const pageTitle = document.getElementById('pageTitle');
+            const storeHeader = document.getElementById('store-header');
+            const publicStoreProducts = document.getElementById('publicStoreProducts');
+            const emptyStoreMessage = document.getElementById('emptyStoreMessage');
+
+            // Global variable to hold the user ID of the store owner
+            let storeOwnerUserId = null;
+
+            // Function to get query parameter from URL
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+
+            // Function to handle the "Buy Now" button click (simulated payment)
+            async function handleFakePayment(productId) {
+                if (!storeOwnerUserId) {
+                    alert('Could not process payment. Store owner ID not found.');
+                    return;
+                }
+
+                try {
+                    // Simulate a successful payment by updating the 'isPro' field in Firestore
+                    const productRef = db.collection('users').doc(storeOwnerUserId).collection('products').doc(productId);
+                    await productRef.update({ isPro: true });
+                    
+                    // Redirect to the payments success page
+                    window.location.href = `payments.html?status=success&product=${productId}&uid=${storeOwnerUserId}`;
+                } catch (error) {
+                    console.error("Error simulating payment:", error);
+                    window.location.href = `payments.html?status=cancel&uid=${storeOwnerUserId}`;
+                }
+            }
+
+            // Function to render the products
+            function renderProducts(products) {
+                publicStoreProducts.innerHTML = ''; // Clear existing products
+                if (products.length === 0) {
+                    emptyStoreMessage.classList.remove('hidden');
+                } else {
+                    emptyStoreMessage.classList.add('hidden');
+                    products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'bg-gray-800 rounded-xl p-4 shadow-xl border border-gray-700 relative group overflow-hidden';
+                        
+                        let cardContent = `
+                            <img src="${product.imageUrl}" alt="${product.name}" class="rounded-lg w-full h-48 object-cover mb-4 border-2 border-gray-600" onerror="this.src='https://placehold.co/400x300/1F2937/D1D5DB?text=No+Image';">
+                            <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
+                            <p class="text-[--color-neon-green] text-lg font-semibold mb-4">$${product.price}</p>
+                        `;
+
+                        // Add the "Buy Now" or "Unlocked" content based on isPro status
+                        if (product.isPro) {
+                            // Product is "unlocked", show the actual link
+                            cardContent += `
+                                <a href="${product.link}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
+                                    View Full Content
+                                </a>
+                                <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">UNLOCKED</span>
+                            `;
+                        } else {
+                            // Product is "locked", show a blur effect and a Buy Now button
+                            cardContent += `
+                                <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-md flex items-center justify-center transition-all duration-300 opacity-100 group-hover:opacity-0">
+                                    <div class="text-center text-white">
+                                        <h3 class="text-2xl font-bold mb-2">Locked Content</h3>
+                                        <button class="buy-now-btn bg-[--color-neon-green] text-gray-900 font-bold py-2 px-6 rounded-full text-sm shadow-lg hover:bg-opacity-80 transition duration-300" data-product-id="${product.id}">
+                                            Buy Now
+                                        </button>
+                                        <button class="fake-pay-btn mt-2 bg-yellow-500 text-white font-bold py-1 px-4 rounded-full text-xs hover:bg-opacity-80 transition duration-300" data-product-id="${product.id}">
+                                            Fake Pay (Test Only)
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        productCard.innerHTML = cardContent;
+                        publicStoreProducts.appendChild(productCard);
+                    });
+                    
+                    // Attach event listeners to the new buttons
+                    document.querySelectorAll('.fake-pay-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const productId = e.target.getAttribute('data-product-id');
+                            if (productId) {
+                                handleFakePayment(productId);
+                            }
+                        });
+                    });
+                }
+            }
+
+            // Main function to fetch store data on page load
+            function loadStore() {
+                storeOwnerUserId = getQueryParam('uid');
+
+                if (!storeOwnerUserId) {
+                    storeHeader.innerHTML = 'Store Not Found';
+                    storeHeader.classList.add('text-center', 'text-red-500');
+                    return;
+                }
+
+                storeHeader.innerHTML = `<span class="text-[--color-neon-pink]">${storeOwnerUserId}</span>'s Store`;
+                pageTitle.textContent = `Selloo - ${storeOwnerUserId}'s Store`;
+
+                const productsRef = db.collection('users').doc(storeOwnerUserId).collection('products').orderBy('timestamp', 'desc');
+                productsRef.onSnapshot(snapshot => {
+                    const products = [];
+                    snapshot.forEach(doc => {
+                        // Include the document ID in the product data
+                        products.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderProducts(products);
+                }, error => {
+                    console.error("Error fetching products:", error);
+                    storeHeader.innerHTML = `<span class="text-red-500">Error Loading Store</span>`;
+                    emptyStoreMessage.textContent = "Failed to load products. Please try again later.";
+                    emptyStoreMessage.classList.remove('hidden');
+                });
+            }
+
+            loadStore();
+        });
+    </script>
+</body>
+</html>
