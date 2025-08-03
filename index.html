@@ -6,131 +6,454 @@
     <title>Selloo - Create. Share. Sell. Instantly.</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Custom Tailwind configuration for specific colors and font */
-        /* This block is necessary for Tailwind CDN to recognize custom colors and fonts */
-        /* If you were using a build process, these would be in tailwind.config.js */
         :root {
-            --color-neon-green: #39FF14;
-            --color-neon-pink: #FF1493;
-            --color-dark-bg: #0F0F0F;
+            --color-primary: #6366f1;
+            --color-primary-light: #818cf8;
+            --color-dark: #0f172a;
+            --color-light: #f8fafc;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
         }
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(129,140,248,0.05) 100%);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3), 0 2px 4px -1px rgba(99, 102, 241, 0.2);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -2px rgba(99, 102, 241, 0.2);
+        }
+        .mobile-menu {
+            transition: all 0.3s ease;
+            transform: translateX(100%);
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .testimonial-card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
         }
     </style>
 </head>
-<body class="bg-[--color-dark-bg] text-gray-100 min-h-screen">
-
-    <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
-        <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
-            <a href="#" class="text-4xl font-extrabold text-[--color-neon-green] tracking-tight">Selloo</a>
-            <nav class="hidden md:block">
-                <ul class="flex space-x-8 text-lg">
-                    <li><a href="#features" class="hover:text-[--color-neon-green] transition duration-300">Features</a></li>
-                    <li><a href="#" class="hover:text-[--color-neon-green] transition duration-300">Pricing</a></li>
-                    <li><a href="#" class="hover:text-[--color-neon-green] transition duration-300">Contact</a></li>
-                </ul>
-            </nav>
-            <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-100 focus:outline-none p-2 rounded-md hover:bg-gray-800 transition duration-300">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-4 6h4"></path>
-                    </svg>
-                </button>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <header class="fixed w-full bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-2xl font-bold text-gray-900 font-heading flex items-center">
+                        <span class="bg-primary text-white rounded-lg px-2 py-1 mr-2">Selloo</span>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <nav class="flex space-x-8">
+                        <a href="#features" class="text-gray-600 hover:text-primary font-medium transition">Features</a>
+                        <a href="#how-it-works" class="text-gray-600 hover:text-primary font-medium transition">How It Works</a>
+                        <a href="#testimonials" class="text-gray-600 hover:text-primary font-medium transition">Testimonials</a>
+                        <a href="#pricing" class="text-gray-600 hover:text-primary font-medium transition">Pricing</a>
+                    </nav>
+                </div>
+                <div class="hidden md:block">
+                    <a href="builder.html" class="px-4 py-2 bg-primary text-white rounded-md font-medium hover:bg-primary-light transition">
+                        Get Started
+                    </a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-600 hover:text-primary focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-[--color-dark-bg] px-4 pt-2 pb-4 border-t border-gray-800">
-            <ul class="flex flex-col space-y-3 text-lg">
-                <li><a href="#features" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Features</a></li>
-                <li><a href="#" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Pricing</a></li>
-                <li><a href="#" class="block py-2 px-3 rounded-md hover:bg-gray-800 hover:text-[--color-neon-green] transition duration-300">Contact</a></li>
-            </ul>
         </div>
     </header>
 
-    <section class="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] text-center px-4 py-16 md:py-24">
-        <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-white tracking-tight">
-            Create. Share. Sell. <span class="text-[--color-neon-green]">Instantly.</span>
-        </h1>
-        <p class="text-xl md:text-2xl max-w-3xl mb-10 text-gray-300">
-            Build a mobile-friendly store in seconds — no code needed.
-        </p>
-        <a href="builder.html" class="bg-[--color-neon-green] text-gray-900 font-bold py-4 px-10 rounded-full text-xl hover:bg-opacity-80 transition duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl">
-            Start Now
-        </a>
-    </section>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-64 bg-white shadow-lg z-50 p-4 overflow-y-auto">
+        <div class="flex justify-end">
+            <button id="close-mobile-menu" class="text-gray-600 hover:text-primary">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <nav class="mt-8 space-y-4">
+            <a href="#features" class="block px-4 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md font-medium">Features</a>
+            <a href="#how-it-works" class="block px-4 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md font-medium">How It Works</a>
+            <a href="#testimonials" class="block px-4 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md font-medium">Testimonials</a>
+            <a href="#pricing" class="block px-4 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-md font-medium">Pricing</a>
+        </nav>
+        <div class="mt-8 px-4">
+            <a href="builder.html" class="block w-full px-4 py-2 bg-primary text-white rounded-md text-center font-medium hover:bg-primary-light transition">
+                Get Started
+            </a>
+        </div>
+    </div>
 
-    <section id="features" class="py-16 md:py-24 px-4 bg-gray-900">
-        <div class="container mx-auto">
-            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 text-white">Why Selloo?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
-                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
-                    <div class="w-20 h-20 bg-[--color-neon-pink] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
-                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.395 2.174a1 1 0 00-1.285-.367l-7.5 4.5a1 1 0 00-.012 1.76l7.5 4.5a1 1 0 001.285-.367l-3.5-7zM16 9a1 1 0 00-1 1v4a1 1 0 11-2 0v-4a1 1 0 10-2 0v4a1 1 0 11-2 0V9a1 1 0 00-1-1zm-4-3a1 1 0 00-1 1v4a1 1 0 11-2 0V7a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 md:pt-32 md:pb-24 hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 font-heading leading-tight mb-6">
+                        Create. Share. Sell. <span class="text-primary">Instantly.</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 max-w-lg">
+                        Build a beautiful mobile-friendly store in seconds — no coding required. Perfect for digital products, services, and more.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="builder.html" class="cta-button px-8 py-3 bg-primary text-white rounded-lg font-bold text-lg hover:bg-primary-light transition text-center">
+                            Start Selling Free
+                        </a>
+                        <a href="#how-it-works" class="px-8 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition text-center">
+                            How It Works
+                        </a>
                     </div>
-                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">No Code Required</h3>
-                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Build your store with intuitive drag-and-drop tools, no coding knowledge needed.</p>
+                    <div class="mt-8 flex items-center space-x-4">
+                        <div class="flex -space-x-2">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-10 h-10 rounded-full border-2 border-white" alt="User">
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Join <span class="font-bold text-primary">5,000+</span> creators selling online
+                        </p>
+                    </div>
                 </div>
-                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
-                    <div class="w-20 h-20 bg-[--color-neon-green] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
-                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 14a2 2 0 100-4 2 2 0 000 4z"></path></svg>
+                <div class="relative hidden md:block">
+                    <div class="relative z-10 animate-float">
+                        <img src="https://placehold.co/600x600/e2e8f0/64748b?text=Store+Preview" alt="Selloo Store Preview" class="rounded-2xl shadow-xl border-8 border-white">
                     </div>
-                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Mobile-First Design</h3>
-                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Your store looks stunning and functions perfectly on any mobile device.</p>
-                </div>
-                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
-                    <div class="w-20 h-20 bg-[--color-neon-pink] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
-                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Free & Pro Plans</h3>
-                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Start for free and upgrade to Pro for advanced features and more.</p>
-                </div>
-                <div class="group bg-gray-800 rounded-xl p-8 flex flex-col items-center text-center shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 border border-gray-700 group-hover:border-[--color-neon-green]">
-                    <div class="w-20 h-20 bg-[--color-neon-green] rounded-full flex items-center justify-center mb-6 transition duration-300 group-hover:scale-110">
-                        <svg class="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold mb-3 text-white group-hover:text-[--color-neon-green] transition duration-300">Instant Share Links</h3>
-                    <p class="text-gray-400 group-hover:text-gray-300 transition duration-300">Share your store with customers instantly via a unique, easy-to-remember link.</p>
+                    <div class="absolute -bottom-8 -left-8 w-64 h-64 bg-primary-light rounded-2xl opacity-20"></div>
+                    <div class="absolute -top-8 -right-8 w-64 h-64 bg-primary rounded-2xl opacity-10"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-16 md:py-24 px-4">
-        <div class="container mx-auto text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-white">See Selloo in Action</h2>
-            <div class="bg-gray-800 rounded-xl p-6 md:p-12 max-w-4xl mx-auto border-4 border-[--color-neon-green] shadow-2xl">
-                <div class="relative w-full h-80 md:h-96 bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center border border-gray-600">
-                    <p class="text-gray-400 text-xl md:text-2xl font-medium">Mobile Store Mockup Preview Here</p>
+    <!-- Trust Badges -->
+    <div class="bg-gray-50 py-8 border-t border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500 mb-6">TRUSTED BY CREATORS WORLDWIDE</p>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-center">
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/120x40/e2e8f0/64748b?text=Forbes" alt="Forbes" class="h-8 opacity-70">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/120x40/e2e8f0/64748b?text=TechCrunch" alt="TechCrunch" class="h-8 opacity-70">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/120x40/e2e8f0/64748b?text=Wired" alt="Wired" class="h-8 opacity-70">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/120x40/e2e8f0/64748b?text=The+Verge" alt="The Verge" class="h-8 opacity-70">
+                </div>
+                <div class="flex justify-center">
+                    <img src="https://placehold.co/120x40/e2e8f0/64748b?text=Product+Hunt" alt="Product Hunt" class="h-8 opacity-70">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 font-heading mb-4">Everything You Need to Sell Online</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Selloo provides all the tools you need to start selling in minutes, not days.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-mobile-alt text-2xl"></i>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Mobile-First Stores</h3>
+                    <p class="text-gray-600">Beautiful storefronts that look amazing on any device. Over 70% of sales happen on mobile.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-bolt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Instant Setup</h3>
+                    <p class="text-gray-600">Get your store live in under 60 seconds. No technical skills required.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-link text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Direct Links</h3>
+                    <p class="text-gray-600">Share your store with a simple link. No app installs required for customers.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-qrcode text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">QR Code Payments</h3>
+                    <p class="text-gray-600">Accept payments instantly with QR codes. Perfect for in-person sales too.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Real-Time Analytics</h3>
+                    <p class="text-gray-600">Track visits, sales, and customer behavior. Make data-driven decisions.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="w-14 h-14 bg-primary bg-opacity-10 rounded-lg flex items-center justify-center text-primary mb-6">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Secure Payments</h3>
+                    <p class="text-gray-600">All transactions are encrypted. We never store your payment details.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 py-8 px-4 mt-16 border-t border-gray-800">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm space-y-4 md:space-y-0">
-            <div>
-                <a href="https://t.me/selloo_contact" target="_blank" class="hover:text-[--color-neon-green] transition duration-300 text-base">Telegram / Contact Us</a>
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-16 md:py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 font-heading mb-4">How Selloo Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Get your store up and running in just 3 simple steps.</p>
             </div>
-            <div class="text-base">
-                Built by Your Name
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Create Your Store</h3>
+                    <p class="text-gray-600 mb-4">Sign up and customize your store with your branding, products, and pricing.</p>
+                    <div class="flex justify-center">
+                        <div class="w-32 h-1 bg-primary rounded-full"></div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Share Your Link</h3>
+                    <p class="text-gray-600 mb-4">Copy your unique store link and share it anywhere - social media, email, or messages.</p>
+                    <div class="flex justify-center">
+                        <div class="w-32 h-1 bg-primary rounded-full"></div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Start Selling</h3>
+                    <p class="text-gray-600 mb-4">Accept payments and deliver products instantly. We handle everything else.</p>
+                </div>
             </div>
-            <div class="bg-gray-800 text-gray-500 text-xs px-4 py-2 rounded-full font-semibold">
-                v1.0
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-16 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 font-heading mb-4">What Our Users Say</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Join thousands of creators who've transformed their business with Selloo.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="testimonial-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-12 h-12 rounded-full mr-4" alt="Sarah J.">
+                        <div>
+                            <h4 class="font-bold text-gray-900">Sarah J.</h4>
+                            <p class="text-sm text-gray-500">Digital Artist</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"I went from zero to $5k/month in sales thanks to Selloo. The QR code payments made it so easy for my customers to buy my digital art at conventions."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="Michael T.">
+                        <div>
+                            <h4 class="font-bold text-gray-900">Michael T.</h4>
+                            <p class="text-sm text-gray-500">Ebook Author</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"As a writer, I needed a simple way to sell my ebooks directly to readers. Selloo's instant delivery system saved me hours of manual work."</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <div class="testimonial-card bg-white p-8 rounded-xl border border-gray-100">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Priya K.">
+                        <div>
+                            <h4 class="font-bold text-gray-900">Priya K.</h4>
+                            <p class="text-sm text-gray-500">Online Course Creator</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The analytics helped me understand my customers better, and now I'm making 3x more sales. The mobile experience is flawless!"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 md:py-24 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold font-heading mb-6">Ready to Start Selling?</h2>
+            <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">Join thousands of creators who are growing their business with Selloo.</p>
+            <a href="builder.html" class="inline-block px-8 py-4 bg-white text-primary rounded-lg font-bold text-lg hover:bg-opacity-90 transition cta-button">
+                Create Your Free Store
+            </a>
+            <p class="text-sm opacity-80 mt-4">No credit card required. Get started in seconds.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Selloo</h3>
+                    <p class="mb-4">The easiest way to create your own online store and start selling instantly.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Product</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition">Examples</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition">Tutorials</a></li>
+                        <li><a href="#" class="hover:text-white transition">API</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white text-lg font-bold mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-sm">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p>© 2023 Selloo. All rights reserved.</p>
+                    <div class="mt-4 md:mt-0">
+                        <a href="#" class="hover:text-white transition mr-4">Privacy Policy</a>
+                        <a href="#" class="hover:text-white transition">Terms of Service</a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const closeMobileMenu = document.getElementById('close-mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+            
+            // Close mobile menu when clicking outside
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu) {
+                    mobileMenu.classList.remove('open');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Close mobile menu if open
+                        mobileMenu.classList.remove('open');
+                        document.body.style.overflow = '';
+                        
+                        // Scroll to target
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>

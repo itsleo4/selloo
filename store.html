@@ -6,55 +6,257 @@
     <title id="pageTitle">Selloo - Store</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-light: #818cf8;
+            --color-dark: #0f172a;
+            --color-light: #f8fafc;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+        }
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-        :root {
-            --color-neon-green: #39FF14;
-            --color-neon-pink: #FF1493;
-            --color-dark-bg: #0F0F0F;
+        .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .badge-new {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        .payment-step {
+            transition: all 0.3s ease;
+        }
+        .payment-step.active {
+            border-left: 4px solid var(--color-primary);
+            background-color: #f5f7ff;
+        }
+        .clipboard-btn:hover .clipboard-icon {
+            transform: scale(1.1);
+        }
+        .clipboard-icon {
+            transition: transform 0.2s ease;
         }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 </head>
-<body class="bg-[--color-dark-bg] text-gray-100 min-h-screen">
-
-    <!-- Header for the public store -->
-    <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
-        <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
-            <a href="index.html" class="text-3xl font-extrabold text-white">Selloo</a>
+<body class="min-h-screen">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-t-primary border-r-primary border-b-transparent border-l-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="mt-4 text-gray-700 font-medium">Loading store...</p>
         </div>
+    </div>
+
+    <!-- Store Header -->
+    <header class="bg-white shadow-sm relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div id="storeLogo" class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div>
+                        <h1 id="storeHeader" class="text-2xl font-bold text-gray-900 font-heading">Loading...</h1>
+                        <p id="storeDescription" class="text-gray-500 text-sm">Digital products store</p>
+                    </div>
+                </div>
+                <div id="storeSocialLinks" class="flex space-x-4 hidden">
+                    <!-- Social links will be added dynamically -->
+                </div>
+            </div>
+        </div>
+        <div id="storeBanner" class="h-2 w-full bg-gradient-to-r from-primary to-primary-light"></div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="container mx-auto p-4 md:p-8">
-        <h2 id="store-header" class="text-4xl font-extrabold text-white text-center md:text-left">
-            <span class="text-[--color-neon-pink]">Loading...</span>
-        </h2>
-
-        <!-- Product List -->
-        <div id="publicStoreProducts" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            <!-- Product cards will be rendered here dynamically -->
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Store Info (for mobile) -->
+        <div id="mobileStoreInfo" class="bg-white p-4 rounded-lg shadow mb-6 md:hidden">
+            <div id="mobileStoreDescription" class="text-gray-600 text-sm mb-3"></div>
+            <div id="mobileSocialLinks" class="flex space-x-3">
+                <!-- Mobile social links -->
+            </div>
         </div>
 
-        <p id="emptyStoreMessage" class="hidden text-center text-gray-500 mt-8">This store has no products yet.</p>
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Products will be loaded here -->
+            <div id="publicStoreProducts" class="contents">
+                <!-- Product cards will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyStoreMessage" class="hidden text-center py-16">
+            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-store text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-medium text-gray-700 mb-2">This store is empty</h3>
+            <p class="text-gray-500 max-w-md mx-auto">The owner hasn't added any products yet.</p>
+        </div>
     </main>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto" style="box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1)">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">Complete Purchase</h3>
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <!-- Product Info -->
+                <div class="flex justify-center mb-6">
+                    <img id="modalProductImage" src="" alt="Product" class="h-40 w-full object-contain rounded-lg" loading="lazy">
+                </div>
+                <h4 id="modalProductName" class="text-xl font-semibold text-gray-900 text-center"></h4>
+                <p id="modalProductPrice" class="text-2xl font-bold text-primary text-center my-3"></p>
+                <p id="modalProductDesc" class="text-gray-600 text-sm text-center mb-6"></p>
+                
+                <!-- Payment Steps -->
+                <div class="space-y-6">
+                    <!-- Step 1: Choose Payment Method -->
+                    <div id="step1" class="payment-step active p-4 rounded-lg border">
+                        <div class="flex items-center mb-3">
+                            <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">1</div>
+                            <h5 class="font-medium text-gray-700">Choose Payment Method</h5>
+                        </div>
+                        <div class="pl-9 space-y-3">
+                            <button id="onlinePaymentBtn" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50 flex items-center justify-between">
+                                <span>
+                                    <i class="fas fa-credit-card mr-2 text-primary"></i>
+                                    Pay Online
+                                </span>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
+                            <button id="qrPaymentBtn" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50 flex items-center justify-between">
+                                <span>
+                                    <i class="fas fa-qrcode mr-2 text-primary"></i>
+                                    Pay with QR Code
+                                </span>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Payment Details (Online) -->
+                    <div id="step2Online" class="payment-step hidden p-4 rounded-lg border">
+                        <div class="flex items-center mb-3">
+                            <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">2</div>
+                            <h5 class="font-medium text-gray-700">Complete Online Payment</h5>
+                        </div>
+                        <div class="pl-9">
+                            <p class="text-sm text-gray-600 mb-4">Click the button below to complete your payment:</p>
+                            <a id="modalPaymentLink" href="#" target="_blank" class="block w-full px-4 py-3 bg-primary text-white rounded-lg text-center hover:bg-primary-light transition font-medium mb-4">
+                                <i class="fas fa-external-link-alt mr-2"></i> Go to Payment Page
+                            </a>
+                            <p class="text-xs text-gray-500 text-center">You'll be redirected to a secure payment page</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Payment Details (QR) -->
+                    <div id="step2QR" class="payment-step hidden p-4 rounded-lg border">
+                        <div class="flex items-center mb-3">
+                            <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">2</div>
+                            <h5 class="font-medium text-gray-700">Scan QR Code to Pay</h5>
+                        </div>
+                        <div class="pl-9">
+                            <div class="flex justify-center mb-4">
+                                <img id="modalQrCode" src="" alt="Payment QR Code" class="h-48 w-48 object-contain border-2 border-dashed border-gray-200 rounded-lg">
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium text-gray-700">UPI ID:</span>
+                                    <button class="clipboard-btn text-primary text-sm flex items-center" data-clipboard-target="#upiId">
+                                        <span class="clipboard-icon">
+                                            <i class="far fa-copy ml-2"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                                <p id="upiId" class="text-sm font-mono text-gray-900 break-all"></p>
+                            </div>
+                            <p class="text-xs text-gray-500 text-center">Scan the QR code using any UPI payment app</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Access Product -->
+                    <div id="step3" class="payment-step hidden p-4 rounded-lg border">
+                        <div class="flex items-center mb-3">
+                            <div class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center mr-3">3</div>
+                            <h5 class="font-medium text-gray-700">Access Your Product</h5>
+                        </div>
+                        <div class="pl-9">
+                            <p class="text-sm text-gray-600 mb-4">After successful payment, click below to access your product:</p>
+                            <div id="modalProductLinks" class="space-y-3">
+                                <!-- Product links will be added here -->
+                            </div>
+                            <div class="mt-4 p-3 bg-yellow-50 border border-yellow-100 rounded-lg">
+                                <div class="flex items-start">
+                                    <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                                    <p class="text-xs text-yellow-700">If you encounter any issues, please contact the store owner with your payment receipt.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Confirmation -->
+                    <div id="paymentConfirmation" class="hidden p-4 bg-green-50 rounded-lg border border-green-100">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                            <div>
+                                <h5 class="font-medium text-green-800">Payment Confirmed</h5>
+                                <p class="text-sm text-green-600">Thank you for your purchase!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-10 opacity-0 transition-all duration-300 flex items-center hidden">
+        <span id="toastMessage"></span>
+        <button id="closeToast" class="ml-4 text-gray-300 hover:text-white">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Your web app's Firebase configuration
+            // Firebase configuration
             const firebaseConfig = {
-              apiKey: "AIzaSyAoe8uFfecihMO_FbCNQ3zIKikfHcVZy8A",
-              authDomain: "selloo-6eb2b.firebaseapp.com",
-              projectId: "selloo-6eb2b",
-              storageBucket: "selloo-6eb2b.firebasestorage.app",
-              messagingSenderId: "825664800500",
-              appId: "1:825664800500:web:38001172e411163d3440a1",
-              measurementId: "G-Y26MH0D6HD"
+                apiKey: "AIzaSyAoe8uFfecihMO_FbCNQ3zIKikfHcVZy8A",
+                authDomain: "selloo-6eb2b.firebaseapp.com",
+                projectId: "selloo-6eb2b",
+                storageBucket: "selloo-6eb2b.firebasestorage.app",
+                messagingSenderId: "825664800500",
+                appId: "1:825664800500:web:38001172e411163d3440a1",
+                measurementId: "G-Y26MH0D6HD"
             };
 
             // Initialize Firebase
@@ -62,98 +264,333 @@
             const db = firebase.firestore();
 
             // DOM Elements
-            const pageTitle = document.getElementById('pageTitle');
-            const storeHeader = document.getElementById('store-header');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const storeHeader = document.getElementById('storeHeader');
+            const storeDescription = document.getElementById('storeDescription');
+            const storeLogo = document.getElementById('storeLogo');
+            const storeBanner = document.getElementById('storeBanner');
+            const storeSocialLinks = document.getElementById('storeSocialLinks');
+            const mobileStoreDescription = document.getElementById('mobileStoreDescription');
+            const mobileSocialLinks = document.getElementById('mobileSocialLinks');
             const publicStoreProducts = document.getElementById('publicStoreProducts');
             const emptyStoreMessage = document.getElementById('emptyStoreMessage');
+            const productModal = document.getElementById('productModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalProductImage = document.getElementById('modalProductImage');
+            const modalProductName = document.getElementById('modalProductName');
+            const modalProductPrice = document.getElementById('modalProductPrice');
+            const modalProductDesc = document.getElementById('modalProductDesc');
+            const modalPaymentLink = document.getElementById('modalPaymentLink');
+            const modalQrCode = document.getElementById('modalQrCode');
+            const modalProductLinks = document.getElementById('modalProductLinks');
+            const step1 = document.getElementById('step1');
+            const step2Online = document.getElementById('step2Online');
+            const step2QR = document.getElementById('step2QR');
+            const step3 = document.getElementById('step3');
+            const onlinePaymentBtn = document.getElementById('onlinePaymentBtn');
+            const qrPaymentBtn = document.getElementById('qrPaymentBtn');
+            const paymentConfirmation = document.getElementById('paymentConfirmation');
+            const upiId = document.getElementById('upiId');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const closeToast = document.getElementById('closeToast');
+            const pageTitle = document.getElementById('pageTitle');
 
-            // Function to get query parameter from URL
+            // Current product in modal
+            let currentProduct = null;
+            let currentStore = null;
+
+            // Get store owner ID from URL
             function getQueryParam(param) {
                 const urlParams = new URLSearchParams(window.location.search);
                 return urlParams.get(param);
             }
 
-            // Function to render the products
+            // Show toast notification
+            function showToast(message, duration = 3000) {
+                toastMessage.textContent = message;
+                toast.classList.remove('hidden');
+                toast.classList.remove('translate-y-10', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+                
+                if (duration) {
+                    setTimeout(() => {
+                        hideToast();
+                    }, duration);
+                }
+            }
+
+            // Hide toast
+            function hideToast() {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300);
+            }
+
+            // Copy to clipboard
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Failed to copy', 2000);
+                });
+            }
+
+            // Reset payment steps
+            function resetPaymentSteps() {
+                document.querySelectorAll('.payment-step').forEach(step => {
+                    step.classList.remove('active');
+                    step.classList.add('hidden');
+                });
+                step1.classList.add('active');
+                step1.classList.remove('hidden');
+                paymentConfirmation.classList.add('hidden');
+            }
+
+            // Render store info
+            function renderStoreInfo(storeData) {
+                if (storeData.name) {
+                    storeHeader.textContent = storeData.name;
+                    pageTitle.textContent = `Selloo - ${storeData.name}'s Store`;
+                }
+                
+                if (storeData.description) {
+                    storeDescription.textContent = storeData.description;
+                    mobileStoreDescription.textContent = storeData.description;
+                }
+                
+                if (storeData.logoColor) {
+                    storeLogo.style.backgroundColor = storeData.logoColor;
+                }
+                
+                if (storeData.bannerColor) {
+                    storeBanner.style.background = storeData.bannerColor;
+                }
+                
+                if (storeData.socialLinks) {
+                    storeSocialLinks.classList.remove('hidden');
+                    mobileSocialLinks.innerHTML = '';
+                    
+                    Object.entries(storeData.socialLinks).forEach(([platform, url]) => {
+                        if (url) {
+                            const iconMap = {
+                                'website': 'globe',
+                                'instagram': 'instagram',
+                                'twitter': 'twitter',
+                                'facebook': 'facebook',
+                                'youtube': 'youtube',
+                                'telegram': 'telegram',
+                                'whatsapp': 'whatsapp'
+                            };
+                            
+                            const icon = iconMap[platform] || 'link';
+                            
+                            // Desktop social links
+                            const desktopLink = document.createElement('a');
+                            desktopLink.href = url;
+                            desktopLink.target = "_blank";
+                            desktopLink.className = "text-gray-500 hover:text-primary transition";
+                            desktopLink.innerHTML = `<i class="fab fa-${icon} text-lg"></i>`;
+                            storeSocialLinks.appendChild(desktopLink);
+                            
+                            // Mobile social links
+                            const mobileLink = document.createElement('a');
+                            mobileLink.href = url;
+                            mobileLink.target = "_blank";
+                            mobileLink.className = "text-gray-500 hover:text-primary transition";
+                            mobileLink.innerHTML = `<i class="fab fa-${icon} text-lg"></i>`;
+                            mobileSocialLinks.appendChild(mobileLink);
+                        }
+                    });
+                }
+            }
+
+            // Render products
             function renderProducts(products) {
-                publicStoreProducts.innerHTML = ''; // Clear existing products
+                publicStoreProducts.innerHTML = '';
+                
                 if (products.length === 0) {
                     emptyStoreMessage.classList.remove('hidden');
                 } else {
                     emptyStoreMessage.classList.add('hidden');
-                    products.forEach(product => {
-                        const productCard = document.createElement('div');
-                        productCard.className = 'bg-gray-800 rounded-xl p-4 shadow-xl border border-gray-700 relative group overflow-hidden';
-                        
-                        let cardContent = `
-                            <img src="${product.imageUrl}" alt="${product.name}" class="rounded-lg w-full h-48 object-cover mb-4 border-2 border-gray-600" onerror="this.src='https://placehold.co/400x300/1F2937/D1D5DB?text=No+Image';">
-                            <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
-                            <p class="text-[--color-neon-green] text-lg font-semibold mb-2">$${product.price}</p>
-                            <p class="text-sm text-gray-400 mb-4">${product.description || ''}</p>
-                            <a href="${product.paymentLink}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
-                                Buy Now
-                            </a>
-                        `;
-
-                        // Add the donate button if either UPI or PayPal is provided
-                        if (product.donateUPI || product.donatePayPal) {
-                            cardContent += `
-                                <div class="mt-4">
-                                    <button class="donate-btn w-full inline-block text-center bg-gray-700 text-gray-300 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition duration-300 shadow-md">
-                                        <span class="text-red-500">❤️</span> Donate
-                                    </button>
-                                    <div class="donate-options hidden mt-2 text-center text-gray-300 bg-gray-700 rounded-lg p-2 space-y-2">
-                                        ${product.donateUPI ? `<p class="text-xs"><strong>UPI:</strong> ${product.donateUPI}</p>` : ''}
-                                        ${product.donatePayPal ? `<a href="${product.donatePayPal}" target="_blank" class="text-xs text-[--color-neon-green] hover:underline">Donate via PayPal</a>` : ''}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        productCard.innerHTML = cardContent;
-                        publicStoreProducts.appendChild(productCard);
-                    });
                     
-                    // Attach event listeners to the new donate buttons
-                    document.querySelectorAll('.donate-btn').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            const donateOptions = e.target.closest('div').querySelector('.donate-options');
-                            if (donateOptions) {
-                                donateOptions.classList.toggle('hidden');
-                            }
+                    // Sort products by date (newest first)
+                    products.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+                    
+                    products.forEach((product, index) => {
+                        const isNew = Date.now() - product.createdAt?.toDate().getTime() < 7 * 24 * 60 * 60 * 1000;
+                        const isPopular = index < 3; // First 3 products are "popular"
+                        
+                        const productCard = document.createElement('div');
+                        productCard.className = 'bg-white rounded-lg shadow-md overflow-hidden product-card relative';
+                        productCard.innerHTML = `
+                            <div class="relative">
+                                ${isNew ? '<span class="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full badge-new">NEW</span>' : ''}
+                                ${isPopular ? '<span class="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">POPULAR</span>' : ''}
+                                <img src="${product.imageUrl}" alt="${product.name}" 
+                                     class="w-full h-48 object-cover" 
+                                     loading="lazy"
+                                     onerror="this.src='https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-900 mb-1 truncate">${product.name}</h3>
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-primary font-bold text-lg">$${product.price}</p>
+                                    ${product.qrCodeUrl ? '<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded"><i class="fas fa-qrcode mr-1"></i>QR Pay</span>' : ''}
+                                </div>
+                                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.description || 'No description'}</p>
+                                <button class="view-product-btn w-full py-2 bg-primary text-white rounded-md hover:bg-primary-light transition font-medium">
+                                    Buy Now
+                                </button>
+                            </div>
+                        `;
+                        
+                        publicStoreProducts.appendChild(productCard);
+                        
+                        // Add click event to view product details
+                        productCard.querySelector('.view-product-btn').addEventListener('click', () => {
+                            showProductModal(product);
                         });
                     });
                 }
             }
 
-            // Main function to fetch store data on page load
+            // Show product modal
+            function showProductModal(product) {
+                currentProduct = product;
+                resetPaymentSteps();
+                
+                // Set product info
+                modalProductImage.src = product.imageUrl;
+                modalProductName.textContent = product.name;
+                modalProductPrice.textContent = `$${product.price}`;
+                modalProductDesc.textContent = product.description || '';
+                modalPaymentLink.href = product.paymentLink;
+                
+                // Set UPI ID if available
+                if (product.upiId) {
+                    upiId.textContent = product.upiId;
+                }
+                
+                // Set QR code if available
+                if (product.qrCodeUrl) {
+                    modalQrCode.src = product.qrCodeUrl;
+                }
+                
+                // Clear previous links and add new ones
+                modalProductLinks.innerHTML = '';
+                if (product.links && product.links.length > 0) {
+                    product.links.forEach((link, index) => {
+                        if (link) {
+                            const linkDiv = document.createElement('div');
+                            linkDiv.className = 'border rounded-md p-3 bg-gray-50';
+                            linkDiv.innerHTML = `
+                                <a href="${link}" target="_blank" class="block w-full py-2 bg-green-500 text-white rounded-md text-center hover:bg-green-600 transition font-medium">
+                                    ${product.links.length > 1 ? `Download Option ${index + 1}` : 'Download Product'}
+                                </a>
+                                <p class="text-xs text-gray-500 mt-1 text-center">After payment</p>
+                            `;
+                            modalProductLinks.appendChild(linkDiv);
+                        }
+                    });
+                }
+                
+                // Show modal
+                productModal.classList.remove('hidden');
+            }
+
+            // Close modal
+            function closeModal() {
+                productModal.classList.add('hidden');
+                resetPaymentSteps();
+            }
+
+            // Event listeners
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            onlinePaymentBtn.addEventListener('click', () => {
+                step1.classList.remove('active');
+                step2Online.classList.add('active');
+                step2Online.classList.remove('hidden');
+            });
+            
+            qrPaymentBtn.addEventListener('click', () => {
+                if (!currentProduct.qrCodeUrl) {
+                    showToast('QR code payment not available', 2000);
+                    return;
+                }
+                step1.classList.remove('active');
+                step2QR.classList.add('active');
+                step2QR.classList.remove('hidden');
+            });
+            
+            // Close modal when clicking outside
+            productModal.addEventListener('click', (e) => {
+                if (e.target === productModal) {
+                    closeModal();
+                }
+            });
+            
+            // Close toast
+            closeToast.addEventListener('click', hideToast);
+            
+            // Clipboard buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.clipboard-btn')) {
+                    const targetId = e.target.closest('.clipboard-btn').getAttribute('data-clipboard-target');
+                    const text = document.querySelector(targetId)?.textContent;
+                    if (text) {
+                        copyToClipboard(text);
+                    }
+                }
+            });
+
+            // Load store data
             function loadStore() {
                 const storeOwnerUserId = getQueryParam('uid');
 
                 if (!storeOwnerUserId) {
-                    storeHeader.innerHTML = 'Store Not Found';
-                    storeHeader.classList.add('text-center', 'text-red-500');
+                    storeHeader.innerHTML = '<span class="text-red-500">Store Not Found</span>';
+                    emptyStoreMessage.querySelector('h3').textContent = "Store not found";
+                    emptyStoreMessage.querySelector('p').textContent = "The store link you followed is invalid.";
+                    emptyStoreMessage.classList.remove('hidden');
+                    loadingOverlay.classList.add('hidden');
                     return;
                 }
 
-                storeHeader.innerHTML = `<span class="text-[--color-neon-pink]">${storeOwnerUserId}</span>'s Store`;
-                pageTitle.textContent = `Selloo - ${storeOwnerUserId}'s Store`;
+                // Load store info
+                db.collection('users').doc(storeOwnerUserId).get().then(doc => {
+                    if (doc.exists) {
+                        currentStore = doc.data();
+                        renderStoreInfo(currentStore);
+                    }
+                }).catch(error => {
+                    console.error("Error loading store info:", error);
+                });
 
+                // Load products
                 const productsRef = db.collection('users').doc(storeOwnerUserId).collection('products').orderBy('createdAt', 'desc');
                 productsRef.onSnapshot(snapshot => {
                     const products = [];
                     snapshot.forEach(doc => {
-                        // Include the document ID in the product data
                         products.push({ id: doc.id, ...doc.data() });
                     });
                     renderProducts(products);
+                    loadingOverlay.classList.add('hidden');
                 }, error => {
                     console.error("Error fetching products:", error);
-                    storeHeader.innerHTML = `<span class="text-red-500">Error Loading Store</span>`;
-                    emptyStoreMessage.textContent = "Failed to load products. Please try again later.";
+                    storeHeader.innerHTML = '<span class="text-red-500">Error Loading Store</span>';
+                    emptyStoreMessage.querySelector('h3').textContent = "Error loading store";
+                    emptyStoreMessage.querySelector('p').textContent = "There was a problem loading this store. Please try again later.";
                     emptyStoreMessage.classList.remove('hidden');
+                    loadingOverlay.classList.add('hidden');
                 });
             }
 
+            // Initialize
             loadStore();
         });
     </script>
