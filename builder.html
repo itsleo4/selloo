@@ -27,84 +27,92 @@
 </head>
 <body class="bg-[--color-dark-bg] text-gray-100 min-h-screen">
 
-    <!-- Sticky Header -->
-    <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
-        <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
-            <a href="index.html" class="text-3xl font-extrabold text-white">Selloo</a>
-            <div class="flex items-center space-x-4">
-                <a id="viewStoreLink" href="#" class="hidden px-4 py-2 rounded-full font-bold text-sm bg-[--color-neon-green] text-gray-900 hover:bg-opacity-80 transition-all duration-300">
-                    View Store
-                </a>
-                <button id="logoutBtn" class="px-4 py-2 rounded-full font-bold text-sm text-[--color-neon-pink] border-2 border-[--color-neon-pink] hover:bg-[--color-neon-pink] hover:text-white transition-all duration-300">
-                    Logout
-                </button>
+    <!-- Loading Spinner/Message -->
+    <div id="loading-message" class="flex items-center justify-center min-h-screen text-2xl font-bold text-gray-500">
+        Loading...
+    </div>
+
+    <!-- Main Content Area - Hidden until user is authenticated -->
+    <div id="main-content" class="hidden">
+        <!-- Sticky Header -->
+        <header class="sticky top-0 z-50 bg-[--color-dark-bg] bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-xl py-4 border-b border-gray-800">
+            <div class="container mx-auto flex justify-between items-center px-4 md:px-8">
+                <a href="index.html" class="text-3xl font-extrabold text-white">Selloo</a>
+                <div class="flex items-center space-x-4">
+                    <a id="viewStoreLink" href="#" class="hidden px-4 py-2 rounded-full font-bold text-sm bg-[--color-neon-green] text-gray-900 hover:bg-opacity-80 transition-all duration-300">
+                        View Store
+                    </a>
+                    <button id="logoutBtn" class="px-4 py-2 rounded-full font-bold text-sm text-[--color-neon-pink] border-2 border-[--color-neon-pink] hover:bg-[--color-neon-pink] hover:text-white transition-all duration-300">
+                        Logout
+                    </button>
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content Area -->
-    <main class="container mx-auto p-4 md:p-8">
-        <h2 class="text-4xl font-extrabold text-white text-center md:text-left">Create your <span class="text-[--color-neon-pink]">Microstore</span></h2>
-        <p class="text-center md:text-left text-gray-400 mt-2">Add products to your store below.</p>
+        <!-- Main Content Area -->
+        <main class="container mx-auto p-4 md:p-8">
+            <h2 class="text-4xl font-extrabold text-white text-center md:text-left">Create your <span class="text-[--color-neon-pink]">Microstore</span></h2>
+            <p class="text-center md:text-left text-gray-400 mt-2">Add products to your store below.</p>
 
-        <!-- Dynamic Store Link Message -->
-        <div id="store-live-message" class="hidden mt-6 p-4 rounded-xl bg-gray-800 border border-gray-700 shadow-lg">
-            <p class="text-center text-gray-200">
-                Your store is live at: <a id="store-link-url" href="#" target="_blank" class="text-[--color-neon-green] font-semibold hover:underline break-all"></a>
-                <br/>
-                <span class="text-xs text-gray-400">Share it anywhere to get orders!</span>
-            </p>
-        </div>
+            <!-- Dynamic Store Link Message -->
+            <div id="store-live-message" class="hidden mt-6 p-4 rounded-xl bg-gray-800 border border-gray-700 shadow-lg">
+                <p class="text-center text-gray-200">
+                    Your store is live at: <a id="store-link-url" href="#" target="_blank" class="text-[--color-neon-green] font-semibold hover:underline break-all"></a>
+                    <br/>
+                    <span class="text-xs text-gray-400">Share it anywhere to get orders!</span>
+                </p>
+            </div>
 
-        <!-- Product Form -->
-        <div class="bg-gray-900 p-6 rounded-2xl shadow-2xl mt-8 border border-gray-700">
-            <h3 class="text-2xl font-bold text-white mb-4">Add a New Product</h3>
-            <form id="productForm" class="space-y-4">
-                <div>
-                    <label for="productName" class="block text-sm font-medium text-gray-300">Product Name</label>
-                    <input type="text" id="productName" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
-                </div>
-                <div>
-                    <label for="productPrice" class="block text-sm font-medium text-gray-300">Price</label>
-                    <input type="number" id="productPrice" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
-                </div>
-                <div>
-                    <label for="productDescription" class="block text-sm font-medium text-gray-300">Product Description</label>
-                    <textarea id="productDescription" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" rows="3"></textarea>
-                </div>
-                <div>
-                    <label for="imageUpload" class="block text-sm font-medium text-gray-300">Product Image</label>
-                    <input type="file" id="imageUpload" accept="image/*" required class="mt-1 block w-full text-sm text-gray-400
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-[--color-neon-pink] file:text-white
-                        hover:file:bg-opacity-80">
-                </div>
-                <div class="space-y-2">
-                    <label for="paymentLink" class="block text-sm font-medium text-gray-300">Payment Link (UPI, Razorpay, etc.)</label>
-                    <input type="url" id="paymentLink" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://rzp.io/l/myproduct">
-                </div>
-                <div class="space-y-2">
-                    <label for="donateUPI" class="block text-sm font-medium text-gray-300">UPI for Donations (optional)</label>
-                    <input type="text" id="donateUPI" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., myname@ybl">
-                </div>
-                <div class="space-y-2">
-                    <label for="donatePayPal" class="block text-sm font-medium text-gray-300">PayPal Link for Donations (optional)</label>
-                    <input type="url" id="donatePayPal" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://paypal.me/myname">
-                </div>
-                <button type="submit" id="addProductBtn" class="w-full bg-[--color-neon-pink] text-white font-bold py-2 rounded-lg hover:bg-opacity-80 transition duration-300">
-                    Add Product
-                </button>
-            </form>
-        </div>
+            <!-- Product Form -->
+            <div class="bg-gray-900 p-6 rounded-2xl shadow-2xl mt-8 border border-gray-700">
+                <h3 class="text-2xl font-bold text-white mb-4">Add a New Product</h3>
+                <form id="productForm" class="space-y-4">
+                    <div>
+                        <label for="productName" class="block text-sm font-medium text-gray-300">Product Name</label>
+                        <input type="text" id="productName" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
+                    </div>
+                    <div>
+                        <label for="productPrice" class="block text-sm font-medium text-gray-300">Price</label>
+                        <input type="number" id="productPrice" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
+                    </div>
+                    <div>
+                        <label for="productDescription" class="block text-sm font-medium text-gray-300">Product Description</label>
+                        <textarea id="productDescription" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" rows="3"></textarea>
+                    </div>
+                    <div>
+                        <label for="imageUpload" class="block text-sm font-medium text-gray-300">Product Image</label>
+                        <input type="file" id="imageUpload" accept="image/*" required class="mt-1 block w-full text-sm text-gray-400
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-[--color-neon-pink] file:text-white
+                            hover:file:bg-opacity-80">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="paymentLink" class="block text-sm font-medium text-gray-300">Payment Link (UPI, Razorpay, etc.)</label>
+                        <input type="url" id="paymentLink" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://rzp.io/l/myproduct">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="donateUPI" class="block text-sm font-medium text-gray-300">UPI for Donations (optional)</label>
+                        <input type="text" id="donateUPI" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., myname@ybl">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="donatePayPal" class="block text-sm font-medium text-gray-300">PayPal Link for Donations (optional)</label>
+                        <input type="url" id="donatePayPal" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://paypal.me/myname">
+                    </div>
+                    <button type="submit" id="addProductBtn" class="w-full bg-[--color-neon-pink] text-white font-bold py-2 rounded-lg hover:bg-opacity-80 transition duration-300">
+                        Add Product
+                    </button>
+                </form>
+            </div>
 
-        <!-- Product List -->
-        <div id="products-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            <!-- Product cards will be rendered here -->
-            <p id="no-products-message" class="col-span-full text-center text-gray-500 hidden">You have no products yet. Add one above!</p>
-        </div>
-    </main>
+            <!-- Product List -->
+            <div id="products-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                <!-- Product cards will be rendered here -->
+                <p id="no-products-message" class="col-span-full text-center text-gray-500 hidden">You have no products yet. Add one above!</p>
+            </div>
+        </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -128,6 +136,8 @@
             const imgbbApiKey = "3d9938283c30118811221e08de59fd48";
 
             // DOM Elements
+            const loadingMessage = document.getElementById('loading-message');
+            const mainContent = document.getElementById('main-content');
             const productForm = document.getElementById('productForm');
             const productsList = document.getElementById('products-list');
             const noProductsMessage = document.getElementById('no-products-message');
@@ -275,6 +285,10 @@
             auth.onAuthStateChanged(user => {
                 if (user) {
                     userIdentifier = user.uid;
+                    // Hide loading message and show main content
+                    loadingMessage.classList.add('hidden');
+                    mainContent.classList.remove('hidden');
+
                     // Set up the real-time store link
                     const storeUrl = `store.html?uid=${userIdentifier}`;
                     viewStoreLink.href = storeUrl;
