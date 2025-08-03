@@ -1,80 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selloo - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        :root {
-            --color-neon-green: #39FF14;
-            --color-neon-pink: #FF1493;
-            --color-dark-bg: #0F0F0F;
-        }
-    </style>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Selloo - Login/Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    :root {
+        --color-neon-green: #39FF14;
+        --color-neon-pink: #FF1493;
+        --color-dark-bg: #0F0F0F;
+    }
+    .neon-text {
+        text-shadow: 0 0 5px var(--color-neon-pink), 0 0 10px var(--color-neon-pink), 0 0 20px var(--color-neon-pink);
+    }
+    .neon-border {
+        border-color: var(--color-neon-pink);
+        box-shadow: 0 0 10px var(--color-neon-pink);
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 </head>
 <body class="bg-[--color-dark-bg] text-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-gray-900 p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-gray-800 text-center" id="auth-container">
-        <h1 class="text-5xl font-black text-white">Selloo</h1>
-        <p class="text-gray-400 mt-2 mb-8">Create your store, instantly.</p>
-        <button id="googleSignInBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white text-gray-900 font-bold rounded-lg shadow-md hover:bg-gray-100 transition duration-300">
-            <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,19.034-9.348,19.034-20c0-1.392-0.137-2.756-0.386-4.067z" fill="#FFC107"/>
-                <path d="M6.306,14.691l6.096,3.753C14.072,15.68,16.924,14,20,14c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C31.565,6.053,27.187,4,24,4C16.319,4,9.656,8.327,6.306,14.691z" fill="#FF3D00"/>
-                <path d="M24,44c5.166,0,9.86-1.972,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.626-3.35-11.246-7.942l-6.495,4.981C9.091,39.019,16.14,44,24,44z" fill="#4CAF50"/>
-                <path d="M43.611,20.083H42V20H24v8h11.303C34.569,32.651,30.792,35.84,26,37.382V37H24V20h19.611C43.435,21.23,43.51,22.62,43.611,24z" fill="#1976D2"/>
-            </svg>
-            <span>Sign in with Google</span>
+  <div class="bg-gray-900 p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-gray-800 text-center">
+    <h1 class="text-5xl font-black text-white">Selloo</h1>
+    <p class="text-gray-400 mt-2 mb-8">Create your store, instantly.</p>
+
+    <!-- Login Form -->
+    <div id="loginFormContainer">
+      <h2 class="text-2xl font-bold mb-4">Login</h2>
+      <form id="loginForm" class="space-y-4">
+        <input type="email" id="loginEmail" placeholder="Email" required class="w-full px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[--color-neon-pink]">
+        <input type="password" id="loginPassword" placeholder="Password" required class="w-full px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[--color-neon-pink]">
+        <button type="submit" id="loginBtn" class="w-full bg-[--color-neon-green] text-gray-900 font-bold py-2 rounded-lg hover:bg-opacity-80 transition duration-300">
+          Login
         </button>
+      </form>
+      <div class="mt-4 text-center">
+        <a href="#" id="showRegisterLink" class="text-gray-400 hover:text-[--color-neon-green] transition duration-300">Don't have an account? Register</a>
+      </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Your web app's Firebase configuration
-            const firebaseConfig = {
-              apiKey: "AIzaSyAoe8uFfecihMO_FbCNQ3zIKikfHcVZy8A",
-              authDomain: "selloo-6eb2b.firebaseapp.com",
-              projectId: "selloo-6eb2b",
-              storageBucket: "selloo-6eb2b.firebasestorage.app",
-              messagingSenderId: "825664800500",
-              appId: "1:825664800500:web:38001172e411163d3440a1",
-              measurementId: "G-Y26MH0D6HD"
-            };
-            
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            const auth = firebase.auth();
-            const provider = new firebase.auth.GoogleAuthProvider();
+    <!-- Registration Form -->
+    <div id="registerFormContainer" class="hidden">
+      <h2 class="text-2xl font-bold mb-4">Register</h2>
+      <form id="registerForm" class="space-y-4">
+        <input type="email" id="registerEmail" placeholder="Email" required class="w-full px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[--color-neon-pink]">
+        <input type="password" id="registerPassword" placeholder="Password" required class="w-full px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[--color-neon-pink]">
+        <button type="submit" id="registerBtn" class="w-full bg-[--color-neon-pink] text-white font-bold py-2 rounded-lg hover:bg-opacity-80 transition duration-300">
+          Register
+        </button>
+      </form>
+      <div class="mt-4 text-center">
+        <a href="#" id="showLoginLink" class="text-gray-400 hover:text-[--color-neon-green] transition duration-300">Already have an account? Login</a>
+      </div>
+    </div>
 
-            // DOM elements
-            const googleSignInBtn = document.getElementById('googleSignInBtn');
+    <!-- Divider -->
+    <div class="relative flex py-5 items-center">
+      <div class="flex-grow border-t border-gray-700"></div>
+      <span class="flex-shrink mx-4 text-gray-500">OR</span>
+      <div class="flex-grow border-t border-gray-700"></div>
+    </div>
 
-            // Handle Google Sign-in button click
-            googleSignInBtn.addEventListener('click', async () => {
-                try {
-                    await auth.signInWithRedirect(provider);
-                } catch (error) {
-                    console.error("Google Sign-in Error:", error);
-                    alert("Error during Google Sign-in: " + error.message);
-                }
-            });
+    <!-- Google Sign-in Button -->
+    <button id="googleSignInBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white text-gray-900 font-bold rounded-lg shadow-md hover:bg-gray-100 transition duration-300">
+        <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,19.034-9.348,19.034-20c0-1.392-0.137-2.756-0.386-4.067z" fill="#FFC107"/>
+            <path d="M6.306,14.691l6.096,3.753C14.072,15.68,16.924,14,20,14c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C31.565,6.053,27.187,4,24,4C16.319,4,9.656,8.327,6.306,14.691z" fill="#FF3D00"/>
+            <path d="M24,44c5.166,0,9.86-1.972,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.626-3.35-11.246-7.942l-6.495,4.981C9.091,39.019,16.14,44,24,44z" fill="#4CAF50"/>
+            <path d="M43.611,20.083H42V20H24v8h11.303C34.569,32.651,30.792,35.84,26,37.382V37H24V20h19.611C43.435,21.23,43.51,22.62,43.611,24z" fill="#1976D2"/>
+        </svg>
+        <span>Sign in with Google</span>
+    </button>
+    <div id="message" class="mt-4 text-center text-sm"></div>
+  </div>
 
-            // On page load, check if a user is already logged in
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    // User is signed in, redirect to builder.html
-                    window.location.href = `builder.html`;
-                }
-            });
-        });
-    </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyAoe8uFfecihMO_FbCNQ3zIKikfHcVZy8A",
+        authDomain: "selloo-6eb2b.firebaseapp.com",
+        projectId: "selloo-6eb2b",
+        storageBucket: "selloo-6eb2b.firebasestorage.app",
+        messagingSenderId: "825664800500",
+        appId: "1:825664800500:web:38001172e411163d3440a1",
+        measurementId: "G-Y26MH0D6HD"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      // DOM elements
+      const loginFormContainer = document.getElementById('loginFormContainer');
+      const registerFormContainer = document.getElementById('registerFormContainer');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginEmailInput = document.getElementById('loginEmail');
+      const loginPasswordInput = document.getElementById('loginPassword');
+      const loginBtn = document.getElementById('loginBtn');
+      const registerEmailInput = document.getElementById('registerEmail');
+      const registerPasswordInput = document.getElementById('registerPassword');
+      const registerBtn = document.getElementById('registerBtn');
+      const showRegisterLink = document.getElementById('showRegisterLink');
+      const showLoginLink = document.getElementById('showLoginLink');
+      const googleSignInBtn = document.getElementById('googleSignInBtn');
+      const messageDiv = document.getElementById('message');
+
+      // Helper function to display messages
+      function displayMessage(text, isError = false) {
+        messageDiv.textContent = text;
+        messageDiv.className = `mt-4 text-center text-sm font-bold ${isError ? 'text-red-500' : 'text-[--color-neon-green]'}`;
+      }
+
+      // Show login form by default
+      function showLoginForm() {
+        loginFormContainer.classList.remove('hidden');
+        registerFormContainer.classList.add('hidden');
+        messageDiv.textContent = '';
+      }
+
+      // Show register form
+      function showRegisterForm() {
+        loginFormContainer.classList.add('hidden');
+        registerFormContainer.classList.remove('hidden');
+        messageDiv.textContent = '';
+      }
+
+      // Handle Email/Password Login
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = 'Logging in...';
+        const email = loginEmailInput.value;
+        const password = loginPasswordInput.value;
+        try {
+          await auth.signInWithEmailAndPassword(email, password);
+          displayMessage('Login successful! Redirecting...');
+          // The onAuthStateChanged listener will handle the redirect
+        } catch (error) {
+          displayMessage(`Error: ${error.message}`, true);
+          console.error("Firebase Login Error:", error);
+        } finally {
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = 'Login';
+        }
+      });
+
+      // Handle Email/Password Registration
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = 'Registering...';
+        const email = registerEmailInput.value;
+        const password = registerPasswordInput.value;
+        try {
+          await auth.createUserWithEmailAndPassword(email, password);
+          displayMessage('Registration successful! Redirecting...');
+          // The onAuthStateChanged listener will handle the redirect
+        } catch (error) {
+          displayMessage(`Error: ${error.message}`, true);
+          console.error("Firebase Registration Error:", error);
+        } finally {
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = 'Register';
+        }
+      });
+
+      // Handle Google Sign-in button click
+      googleSignInBtn.addEventListener('click', async () => {
+        try {
+          await auth.signInWithRedirect(provider);
+        } catch (error) {
+          console.error("Google Sign-in Error:", error);
+          displayMessage("Error during Google Sign-in: " + error.message, true);
+        }
+      });
+
+      // Event listeners for switching forms
+      showRegisterLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showRegisterForm();
+      });
+
+      showLoginLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        showLoginForm();
+      });
+
+      // On page load, check if a user is already logged in
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          // User is signed in, redirect to builder.html
+          window.location.href = `builder.html`;
+        } else {
+          // No user is signed in, show login form by default
+          showLoginForm();
+        }
+      });
+
+      // Handle redirect result for Google login
+      auth.getRedirectResult().then(result => {
+        if (result.credential) {
+          // This is a new sign-in from redirect, don't need to do anything here
+          // as onAuthStateChanged will handle the redirect.
+        }
+      }).catch(error => {
+        console.error("Google redirect result error:", error);
+        displayMessage("Error during sign-in redirect: " + error.message, true);
+      });
+    });
+  </script>
 </body>
 </html>
