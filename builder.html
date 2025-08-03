@@ -45,12 +45,14 @@
     <!-- Main Content Area -->
     <main class="container mx-auto p-4 md:p-8">
         <h2 class="text-4xl font-extrabold text-white text-center md:text-left">Create your <span class="text-[--color-neon-pink]">Microstore</span></h2>
-        <p class="text-center md:text-left text-gray-400 mt-2">Add products to your store below. They will be saved to your Firestore database.</p>
+        <p class="text-center md:text-left text-gray-400 mt-2">Add products to your store below.</p>
 
         <!-- Dynamic Store Link Message -->
         <div id="store-live-message" class="hidden mt-6 p-4 rounded-xl bg-gray-800 border border-gray-700 shadow-lg">
             <p class="text-center text-gray-200">
-                Your Store is Live: <a id="store-link-url" href="#" target="_blank" class="text-[--color-neon-green] font-semibold hover:underline break-all"></a>
+                Your store is live at: <a id="store-link-url" href="#" target="_blank" class="text-[--color-neon-green] font-semibold hover:underline break-all"></a>
+                <br/>
+                <span class="text-xs text-gray-400">Share it anywhere to get orders!</span>
             </p>
         </div>
 
@@ -67,8 +69,8 @@
                     <input type="number" id="productPrice" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
                 </div>
                 <div>
-                    <label for="productLink" class="block text-sm font-medium text-gray-300">Product Link</label>
-                    <input type="url" id="productLink" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]">
+                    <label for="productDescription" class="block text-sm font-medium text-gray-300">Product Description</label>
+                    <textarea id="productDescription" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" rows="3"></textarea>
                 </div>
                 <div>
                     <label for="imageUpload" class="block text-sm font-medium text-gray-300">Product Image</label>
@@ -78,6 +80,18 @@
                         file:text-sm file:font-semibold
                         file:bg-[--color-neon-pink] file:text-white
                         hover:file:bg-opacity-80">
+                </div>
+                <div class="space-y-2">
+                    <label for="paymentLink" class="block text-sm font-medium text-gray-300">Payment Link (UPI, Razorpay, etc.)</label>
+                    <input type="url" id="paymentLink" required class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://rzp.io/l/myproduct">
+                </div>
+                <div class="space-y-2">
+                    <label for="donateUPI" class="block text-sm font-medium text-gray-300">UPI for Donations (optional)</label>
+                    <input type="text" id="donateUPI" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., myname@ybl">
+                </div>
+                <div class="space-y-2">
+                    <label for="donatePayPal" class="block text-sm font-medium text-gray-300">PayPal Link for Donations (optional)</label>
+                    <input type="url" id="donatePayPal" class="mt-1 block w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-[--color-neon-pink] focus:border-[--color-neon-pink]" placeholder="e.g., https://paypal.me/myname">
                 </div>
                 <button type="submit" id="addProductBtn" class="w-full bg-[--color-neon-pink] text-white font-bold py-2 rounded-lg hover:bg-opacity-80 transition duration-300">
                     Add Product
@@ -90,7 +104,6 @@
             <!-- Product cards will be rendered here -->
             <p id="no-products-message" class="col-span-full text-center text-gray-500 hidden">You have no products yet. Add one above!</p>
         </div>
-
     </main>
 
     <script>
@@ -105,7 +118,7 @@
               appId: "1:825664800500:web:38001172e411163d3440a1",
               measurementId: "G-Y26MH0D6HD"
             };
-
+            
             // Initialize Firebase
             firebase.initializeApp(firebaseConfig);
             const auth = firebase.auth();
@@ -134,8 +147,7 @@
                 }
 
                 // Custom confirm dialog (since window.confirm is not available)
-                const isConfirmed = window.confirm("Are you sure you want to delete this product?");
-                if (!isConfirmed) {
+                if (!window.confirm("Are you sure you want to delete this product?")) {
                     return;
                 }
 
@@ -164,8 +176,9 @@
                     </div>
                     <img src="${product.imageUrl}" alt="${product.name}" class="rounded-lg w-full h-48 object-cover mb-4 border-2 border-gray-600" onerror="this.src='https://placehold.co/400x300/1F2937/D1D5DB?text=No+Image';">
                     <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
-                    <p class="text-[--color-neon-green] text-lg font-semibold mb-4">$${product.price}</p>
-                    <a href="${product.link}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
+                    <p class="text-[--color-neon-green] text-lg font-semibold mb-2">$${product.price}</p>
+                    <p class="text-sm text-gray-400 mb-4">${product.description || ''}</p>
+                    <a href="${product.paymentLink}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
                         Buy Now
                     </a>
                 `;
@@ -192,7 +205,10 @@
 
                 const productName = document.getElementById('productName').value;
                 const productPrice = parseFloat(document.getElementById('productPrice').value);
-                const productLink = document.getElementById('productLink').value;
+                const productDescription = document.getElementById('productDescription').value;
+                const paymentLink = document.getElementById('paymentLink').value;
+                const donateUPI = document.getElementById('donateUPI').value;
+                const donatePayPal = document.getElementById('donatePayPal').value;
                 const imageFile = document.getElementById('imageUpload').files[0];
                 
                 if (!imageFile) {
@@ -228,10 +244,12 @@
                     await productRef.add({
                         name: productName,
                         price: productPrice,
-                        link: productLink,
+                        description: productDescription,
                         imageUrl: imageUrl,
-                        isPro: false,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        paymentLink: paymentLink,
+                        donateUPI: donateUPI,
+                        donatePayPal: donatePayPal,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
                     productForm.reset();
@@ -266,7 +284,7 @@
                     storeLiveMessage.classList.remove('hidden');
 
                     // Set up a real-time listener for products
-                    const productsRef = db.collection('users').doc(userIdentifier).collection('products').orderBy('timestamp', 'desc');
+                    const productsRef = db.collection('users').doc(userIdentifier).collection('products').orderBy('createdAt', 'desc');
                     productsRef.onSnapshot(snapshot => {
                         productsList.innerHTML = ''; // Clear previous products
                         if (snapshot.empty) {

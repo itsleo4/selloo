@@ -67,33 +67,10 @@
             const publicStoreProducts = document.getElementById('publicStoreProducts');
             const emptyStoreMessage = document.getElementById('emptyStoreMessage');
 
-            // Global variable to hold the user ID of the store owner
-            let storeOwnerUserId = null;
-
             // Function to get query parameter from URL
             function getQueryParam(param) {
                 const urlParams = new URLSearchParams(window.location.search);
                 return urlParams.get(param);
-            }
-
-            // Function to handle the "Buy Now" button click (simulated payment)
-            async function handleFakePayment(productId) {
-                if (!storeOwnerUserId) {
-                    alert('Could not process payment. Store owner ID not found.');
-                    return;
-                }
-
-                try {
-                    // Simulate a successful payment by updating the 'isPro' field in Firestore
-                    const productRef = db.collection('users').doc(storeOwnerUserId).collection('products').doc(productId);
-                    await productRef.update({ isPro: true });
-                    
-                    // Redirect to the payments success page
-                    window.location.href = `payments.html?status=success&product=${productId}&uid=${storeOwnerUserId}`;
-                } catch (error) {
-                    console.error("Error simulating payment:", error);
-                    window.location.href = `payments.html?status=cancel&uid=${storeOwnerUserId}`;
-                }
             }
 
             // Function to render the products
@@ -110,30 +87,23 @@
                         let cardContent = `
                             <img src="${product.imageUrl}" alt="${product.name}" class="rounded-lg w-full h-48 object-cover mb-4 border-2 border-gray-600" onerror="this.src='https://placehold.co/400x300/1F2937/D1D5DB?text=No+Image';">
                             <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
-                            <p class="text-[--color-neon-green] text-lg font-semibold mb-4">$${product.price}</p>
+                            <p class="text-[--color-neon-green] text-lg font-semibold mb-2">$${product.price}</p>
+                            <p class="text-sm text-gray-400 mb-4">${product.description || ''}</p>
+                            <a href="${product.paymentLink}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
+                                Buy Now
+                            </a>
                         `;
 
-                        // Add the "Buy Now" or "Unlocked" content based on isPro status
-                        if (product.isPro) {
-                            // Product is "unlocked", show the actual link
+                        // Add the donate button if either UPI or PayPal is provided
+                        if (product.donateUPI || product.donatePayPal) {
                             cardContent += `
-                                <a href="${product.link}" target="_blank" class="w-full inline-block text-center bg-[--color-neon-pink] text-white py-2 rounded-lg text-sm font-medium hover:bg-opacity-80 transition duration-300 shadow-md">
-                                    View Full Content
-                                </a>
-                                <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">UNLOCKED</span>
-                            `;
-                        } else {
-                            // Product is "locked", show a blur effect and a Buy Now button
-                            cardContent += `
-                                <div class="absolute inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-md flex items-center justify-center transition-all duration-300 opacity-100 group-hover:opacity-0">
-                                    <div class="text-center text-white">
-                                        <h3 class="text-2xl font-bold mb-2">Locked Content</h3>
-                                        <button class="buy-now-btn bg-[--color-neon-green] text-gray-900 font-bold py-2 px-6 rounded-full text-sm shadow-lg hover:bg-opacity-80 transition duration-300" data-product-id="${product.id}">
-                                            Buy Now
-                                        </button>
-                                        <button class="fake-pay-btn mt-2 bg-yellow-500 text-white font-bold py-1 px-4 rounded-full text-xs hover:bg-opacity-80 transition duration-300" data-product-id="${product.id}">
-                                            Fake Pay (Test Only)
-                                        </button>
+                                <div class="mt-4">
+                                    <button class="donate-btn w-full inline-block text-center bg-gray-700 text-gray-300 py-2 rounded-lg text-sm font-medium hover:bg-gray-600 transition duration-300 shadow-md">
+                                        <span class="text-red-500">❤️</span> Donate
+                                    </button>
+                                    <div class="donate-options hidden mt-2 text-center text-gray-300 bg-gray-700 rounded-lg p-2 space-y-2">
+                                        ${product.donateUPI ? `<p class="text-xs"><strong>UPI:</strong> ${product.donateUPI}</p>` : ''}
+                                        ${product.donatePayPal ? `<a href="${product.donatePayPal}" target="_blank" class="text-xs text-[--color-neon-green] hover:underline">Donate via PayPal</a>` : ''}
                                     </div>
                                 </div>
                             `;
@@ -143,12 +113,12 @@
                         publicStoreProducts.appendChild(productCard);
                     });
                     
-                    // Attach event listeners to the new buttons
-                    document.querySelectorAll('.fake-pay-btn').forEach(button => {
+                    // Attach event listeners to the new donate buttons
+                    document.querySelectorAll('.donate-btn').forEach(button => {
                         button.addEventListener('click', (e) => {
-                            const productId = e.target.getAttribute('data-product-id');
-                            if (productId) {
-                                handleFakePayment(productId);
+                            const donateOptions = e.target.closest('div').querySelector('.donate-options');
+                            if (donateOptions) {
+                                donateOptions.classList.toggle('hidden');
                             }
                         });
                     });
@@ -157,7 +127,7 @@
 
             // Main function to fetch store data on page load
             function loadStore() {
-                storeOwnerUserId = getQueryParam('uid');
+                const storeOwnerUserId = getQueryParam('uid');
 
                 if (!storeOwnerUserId) {
                     storeHeader.innerHTML = 'Store Not Found';
@@ -168,7 +138,7 @@
                 storeHeader.innerHTML = `<span class="text-[--color-neon-pink]">${storeOwnerUserId}</span>'s Store`;
                 pageTitle.textContent = `Selloo - ${storeOwnerUserId}'s Store`;
 
-                const productsRef = db.collection('users').doc(storeOwnerUserId).collection('products').orderBy('timestamp', 'desc');
+                const productsRef = db.collection('users').doc(storeOwnerUserId).collection('products').orderBy('createdAt', 'desc');
                 productsRef.onSnapshot(snapshot => {
                     const products = [];
                     snapshot.forEach(doc => {
